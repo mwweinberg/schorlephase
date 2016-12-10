@@ -1,0 +1,22 @@
+[x] figure out how to wire the switch and control three phases
+
+[X] figure out how to control the motor (flag)
+[X] figure out how to control the motor in three phases
+
+[x] figure out how to control the servo (off hand)
+[x] figure out how to contorl the servo in three phases
+
+[] pick sound
+[] figure out how to trigger the sound
+[] figure out how to trigger the sound in three phases
+
+{x} (opt) figure out how to progressively change the color of the LED
+
+[] figure out how to integrate LED, motor, servo, and sound into one script
+
+[] design, print, & test connection between flag and motor
+[] design, print, & test off hand
+[] design, print, & test connection between servo and hand
+[] design, print, & test flagpole
+[] design flag
+[] design piece at top of flowerpot
