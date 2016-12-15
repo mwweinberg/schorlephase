@@ -7,8 +7,8 @@
 [x] figure out how to contorl the servo in three phases
 
 [] pick sound
-[] figure out how to trigger the sound
-[] figure out how to trigger the sound in three phases
+[x] figure out how to trigger the sound
+[x] figure out how to trigger the sound in three phases
 
 {x} (opt) figure out how to progressively change the color of the LED
 
