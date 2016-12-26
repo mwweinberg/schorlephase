@@ -208,13 +208,6 @@ void on() {
 void turnoff() {
   Serial.println("shutdown");
 
-  //***** Tone Section
-  //trigger the down music
-  digitalWrite(downPin, LOW);
-  delay(200);
-  digitalWrite(downPin, HIGH);
-  //this is for the on ping reset
-  pingTracker = 0;
 
   //*****LED section
   // turns off neopixels
@@ -236,6 +229,14 @@ void turnoff() {
 
   //*****stepper section
   myMotor->step(1000, BACKWARD, SINGLE);
+
+  //***** Tone Section
+  //trigger the down music
+  digitalWrite(downPin, LOW);
+  delay(200);
+  digitalWrite(downPin, HIGH);
+  //this is for the on ping reset
+  pingTracker = 0;
   
   //*****cleanup section
   counter = 0;
