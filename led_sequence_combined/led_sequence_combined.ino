@@ -146,10 +146,12 @@ void startup() {
   Serial.println("starting");
 
   //*******LED section
-  //sets the color
-  strip.setPixelColor(0, 255, 0, 0); //pixel number, r,g,b
-  //pushes change to neopixels
-  strip.show();
+  ////this section is optional for if you want a color on during the on sequence
+  ////I think you don't, but just in case I'm leaving it as a placeholder
+  ////sets the color
+  //strip.setPixelColor(0, 255, 0, 0); //pixel number, r,g,b
+  ////pushes change to neopixels
+  //strip.show();
 
   //*******Tone section
   //trigger the sound
