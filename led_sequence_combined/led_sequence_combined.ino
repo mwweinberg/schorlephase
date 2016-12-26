@@ -13,6 +13,11 @@ const int neoPin = 6;         //neopixel control pin
 const int pixelQuant = 1;     // number of neopixels
 //servo constant
 const int servoPin = 9;     // the pin that the servo is attached to
+//sound Pin
+const int upPin = 4;
+const int pingPin = 3;
+const int downPin = 5;
+
 
 
 // *******these variables will change:
@@ -20,6 +25,7 @@ int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
 int counter = 0;
 int stateTracker = 0;          // used to prevent double off-sequencing
+int pingTracker = 0;        // used to make the ping in the on phase happen only once
 //LED variables
 int redVal = 255;            // used to fade out LED. Starts at 255 to match startup val
 int greenVal = 0;             //used to fade in LED
@@ -59,6 +65,14 @@ void setup() {
   //initialize the stepper
   AFMS.begin();  // create with the default frequency 1.6KHz
   myMotor->setSpeed(100);  // 100 rpm - to get faster need to change code
+
+  //initilizes the audio pin
+  pinMode(upPin,OUTPUT);
+  digitalWrite(upPin, HIGH);
+  pinMode(pingPin,OUTPUT);
+  digitalWrite(pingPin, HIGH);
+  pinMode(downPin,OUTPUT);
+  digitalWrite(downPin, HIGH);
 }
 
 
@@ -136,8 +150,10 @@ void startup() {
   strip.show();
 
   //*******Tone section
-  //play the tone
-  tone(8, 1610, 1000);
+  //trigger the sound
+  digitalWrite(upPin, LOW);
+  delay(200);
+  digitalWrite(upPin, HIGH);
 
   //*******Stepper section
   myMotor->step(1000, FORWARD, SINGLE);
@@ -152,6 +168,16 @@ void startup() {
 // this is the on function
 void on() {
   Serial.println("On");
+
+  //***** Tone Section
+  //trigger the ping
+  if (pingTracker == 0) {
+    digitalWrite(pingPin, LOW);
+    delay(200);
+    digitalWrite(pingPin, HIGH);
+    //tells the variable that ping has already happened
+    pingTracker = 1;
+  }
 
   //*****LED section
   // allows the LED to fade out
@@ -177,6 +203,14 @@ void on() {
 //  this is the shutdow function
 void turnoff() {
   Serial.println("shutdown");
+
+  //***** Tone Section
+  //trigger the down music
+  digitalWrite(downPin, LOW);
+  delay(200);
+  digitalWrite(downPin, HIGH);
+  //this is for the on ping reset
+  pingTracker = 0;
 
   //*****LED section
   // turns off neopixels
