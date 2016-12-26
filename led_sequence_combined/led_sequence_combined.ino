@@ -17,6 +17,8 @@ const int servoPin = 9;     // the pin that the servo is attached to
 const int upPin = 4;
 const int pingPin = 3;
 const int downPin = 5;
+// how long the on operiod should be
+const int onTime = 300;
 
 
 
@@ -111,13 +113,13 @@ void loop() {
   //****************************************************
 
   // if the counter > 0 the startup sequence has been initiated
-  if ((counter > 0) && (counter < 100)) {
+  if ((counter > 0) && (counter < onTime)) {
     on();
   }
 
 
   // if counter > 99 it is time to shut down
-  if (counter > 99) {
+  if (counter > (onTime-1)) {
     turnoff();
   }
 
@@ -185,9 +187,9 @@ void on() {
   // 0 is the lowest counter number, 100 is the highest number
   // 255 is where the output number should start (because it is on when counter = 0
   // 0 is where the output ends when the counter  hits 100
-  redVal = map(counter, 0, 100, 255, 0); 
+  redVal = map(counter, 0, onTime, 255, 0); 
   // turns up the green as the red fades out
-  greenVal = map(counter, 0, 100, 0, 255);  
+  greenVal = map(counter, 0, onTime, 0, 255);  
   //sets the color
   strip.setPixelColor(0, redVal, greenVal, 0); //pixel number, r,g,b
   //pushes change to neopixels
