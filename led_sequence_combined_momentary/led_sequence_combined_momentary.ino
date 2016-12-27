@@ -79,19 +79,23 @@ void loop() {
   if (buttonState != lastButtonState) {
     // Delay a little bit to avoid bouncing
     delay(50);
-    // if the state changed and the switch is high
-    if (buttonState == HIGH) {
+    // if the state changed, the switch is high, and the flag is down
+    //pushing the button means that it is time for startup
+    if ((buttonState == HIGH) && (counter == 0)) {
 
       startup();
       
     } 
 
-    // if the state changed and the switch is low
-    if ((buttonState == LOW) && (stateTracker == 1))
-    
-    {
+    //if the state changed, the switch is high, and the flag is up
+    // pushing the botton means that it is time to shut down early
+    //conter >1 instead of >0 becasue it gets set to 1 in startup so will be 1 before completing this
+    //sub routine
+    if ((buttonState == HIGH) && (counter > 1)) {
       turnoff();
     }
+
+    
    
    
   }
@@ -107,7 +111,7 @@ void loop() {
   }
 
 
-  // if counter > 99 it is time to shut down
+  // if counter > onTime it is time to shut down
   if (counter > (onTime-1)) {
     turnoff();
   }
