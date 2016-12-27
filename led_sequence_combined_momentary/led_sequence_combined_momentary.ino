@@ -1,8 +1,6 @@
 // *******libraries
 #include <Adafruit_NeoPixel.h>
-#include <Wire.h>
-#include <Adafruit_MotorShield.h>
-#include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Stepper.h>
 
 // *******these constants won't change:
 const int  buttonPin = 2;    // the pin that the pushbutton is attached to
@@ -14,7 +12,7 @@ const int pixelQuant = 1;     // number of neopixels
 const int upPin = 4;
 const int pingPin = 3;
 const int downPin = 5;
-// how long the on operiod should be
+// how long the on period should be
 const int onTime = 300;
 
 
@@ -28,16 +26,16 @@ int pingTracker = 0;        // used to make the ping in the on phase happen only
 //LED variables
 int redVal = 255;            // used to fade out LED. Starts at 255 to match startup val
 int greenVal = 0;             //used to fade in LED
+//stepper variables
+//number of steps you want the motor to take
+#define STEPS 600
 
 
 //********other initialization things
 // intitialize neopixel object
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelQuant, neoPin, NEO_RGB + NEO_KHZ800);
-// Create the motor shield object with the default I2C address
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-// Connect a stepper motor with 200 steps per revolution (1.8 degree)
-// to motor port #2 (M3 and M4)
-Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
+// create an instance of the stepper, specifiying number of steps and pins
+Stepper stepper(STEPS, 7, 8, 9, 10);
 
 
 
@@ -54,8 +52,8 @@ void setup() {
   strip.show(); // Initialize all pixels to 'off'
 
   //initialize the stepper
-  AFMS.begin();  // create with the default frequency 1.6KHz
-  myMotor->setSpeed(100);  // 100 rpm - to get faster need to change code
+  // speed in RPM - keep it below 25
+  stepper.setSpeed(10);
 
   //initilizes the audio pin
   pinMode(upPin,OUTPUT);
@@ -153,11 +151,13 @@ void startup() {
   digitalWrite(upPin, HIGH);
 
   //*******Stepper section
-  myMotor->step(1000, FORWARD, SINGLE);
+  //goes up STEPS steps
+  stepper.step(STEPS);
 
   //*******cleanup section
   counter = 1;
   stateTracker = 1;
+  pingTracker = 0;
   Serial.println("Startup complete");
   
 }
@@ -168,6 +168,7 @@ void on() {
 
   //***** Tone Section
   //trigger the ping
+  //^^^^^^^^NOTE: ping won't trigger if the startup song ends after the stepper stops in startup()^^^^^
   if (pingTracker == 0) {
     digitalWrite(pingPin, LOW);
     delay(200);
@@ -202,14 +203,6 @@ void turnoff() {
   Serial.println("shutdown");
 
 
-  //*****LED section
-  // turns off neopixels
-  strip.setPixelColor(0, 0, 0, 0); //pixel number, r,g,b
-  strip.show();
-
-  //*****stepper section
-  myMotor->step(1000, BACKWARD, SINGLE);
-
   //***** Tone Section
   //trigger the down music
   digitalWrite(downPin, LOW);
@@ -217,6 +210,18 @@ void turnoff() {
   digitalWrite(downPin, HIGH);
   //this is for the on ping reset
   pingTracker = 0;
+
+  //*****LED section
+  // turns off neopixels
+  strip.setPixelColor(0, 0, 0, 0); //pixel number, r,g,b
+  strip.show();
+  
+
+  //*****stepper section
+  // goes down STEPS steps (down because it is negative)
+  stepper.step(-STEPS);
+
+
   
   //*****cleanup section
   counter = 0;
